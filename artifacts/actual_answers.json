@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "corpus_id": "northstar-student-services-v1",
-  "generated_at": "2026-08-12T04:38:44.257648+00:00",
+  "generated_at": "2026-08-12T05:01:48.236757+00:00",
   "agent": {
     "name": "domain-assistant",
     "model": "gemma4:31b-cloud",
@@ -88,7 +88,7 @@
     {
       "id": "E03",
       "question": "What attendance level is generally expected?",
-      "actual_answer": "In courses that record attendance, students are generally expected to attend at least 80% of scheduled sessions.",
+      "actual_answer": "Students are generally expected to attend at least 80% of scheduled sessions in courses that record attendance.",
       "retrieved_contexts": [
         {
           "source_doc": "05_attendance_and_grading.md",
@@ -202,7 +202,7 @@
     {
       "id": "M01",
       "question": "What happens if a student does not pass a prerequisite after conditional registration?",
-      "actual_answer": "A student currently taking a prerequisite may conditionally register for the next course; however, if the prerequisite is not passed, the registration is removed. The student is currently taking a prerequisite and may conditionally register for the next course. If a student does not pass a prerequisite after conditional registration, the registration is removed.",
+      "actual_answer": "A student currently taking a prerequisite may conditionally register for the next course, but if the prerequisite is not passed, the registration is removed. The student is currently taking a prerequisite and may conditionally register for the next course. If a student does not pass a prerequisite after conditional registration, the registration is removed.",
       "retrieved_contexts": [
         {
           "source_doc": "04_scholarships.md",
@@ -278,7 +278,7 @@
     {
       "id": "M03",
       "question": "What tuition reversal applies between standard add/drop and census?",
-      "actual_answer": "For a course dropped from the day after standard add/drop through the census date, 50% of that course's tuition is reversed.",
+      "actual_answer": "For a course dropped between the day after standard add/drop through the census date, 50% of that course's tuition is reversed.",
       "retrieved_contexts": [
         {
           "source_doc": "09_privacy_security_and_policy_updates.md",
@@ -354,7 +354,7 @@
     {
       "id": "M05",
       "question": "What deadline applies to a formal grade appeal?",
-      "actual_answer": "A formal grade appeal must be filed within ten business days after publication. To be valid, the appeal must identify at least one permitted ground, such as calculation error, syllabus departure (material departure from the published syllabus), procedural unfairness, or prohibited discrimination.",
+      "actual_answer": "A formal grade appeal must be filed within ten business days after publication. To be valid, the appeal must identify at least one permitted ground, such as calculation error, material departure from the published syllabus, procedural unfairness, or prohibited discrimination.",
       "retrieved_contexts": [
         {
           "source_doc": "05_attendance_and_grading.md",
@@ -430,7 +430,7 @@
     {
       "id": "M07",
       "question": "What are the minimum internship hours and key approval requirements?",
-      "actual_answer": "The minimum internship hours and key approval requirements are as follows:\n\n*   **Minimum Hours:** At least 240 verified hours are required.\n*   **Approval Requirements:** Before starting, a student must have an approved placement agreement and workplace supervisor.\n*   **Hour Counting:** Hours completed before approval normally do not count.\n*   **Completion Requirements:** A supervisor completion evaluation and a programme reflection submitted within ten business days after the placement ends are required.",
+      "actual_answer": "Regarding the minimum internship hours and key approval requirements:\n\n*   **Minimum Hours:** At least 240 verified hours are required.\n*   **Approval Requirements:** Before starting, a student must have an approved placement agreement and workplace supervisor.\n*   **Additional Requirements:**\n    *   Hours completed before approval normally do not count.\n    *   A supervisor completion evaluation must be submitted.\n    *   A programme reflection must be submitted within ten business days after the placement ends.",
       "retrieved_contexts": [
         {
           "source_doc": "07_graduation_and_internship.md",
@@ -468,7 +468,7 @@
     {
       "id": "H01",
       "question": "A late-add request is made on August 2 2026 after a July discussion. Which policy and fee apply?",
-      "actual_answer": "Because the late-add request is made on August 2, 2026, after a July discussion, Registration Policy version 2.0 applies (as requests made on or after August 1, 2026, follow version 2.0 regardless of prior discussions in July). The applicable fee is USD 40 per course.",
+      "actual_answer": "For a late-add request made on August 2, 2026, after a July discussion, Registration Policy version 2.0 applies because requests made on or after August 1, 2026, follow version 2.0 even if the student first discussed the request in July. The applicable fee is USD 40 per course.",
       "retrieved_contexts": [
         {
           "source_doc": "09_privacy_security_and_policy_updates.md",

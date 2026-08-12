@@ -3,8 +3,8 @@
     "total": 20,
     "passed": 20,
     "pass_rate": 1.0,
-    "avg_faithfulness": 0.8132361839138289,
-    "avg_relevance": 0.7194408369408369,
+    "avg_faithfulness": 0.820961265849437,
+    "avg_relevance": 0.7249963924963925,
     "avg_completeness": 0.9581930772067689,
     "avg_context_recall": 0.9569337606837607,
     "avg_context_precision": 0.9342361111111112,
@@ -43,7 +43,7 @@
       "id": "E03",
       "difficulty": "easy",
       "question": "What attendance level is generally expected?",
-      "actual_answer": "In courses that record attendance, students are generally expected to attend at least 80% of scheduled sessions.",
+      "actual_answer": "Students are generally expected to attend at least 80% of scheduled sessions in courses that record attendance.",
       "faithfulness": 0.9090909090909091,
       "relevance": 0.6,
       "completeness": 1.0,
@@ -85,13 +85,13 @@
       "id": "M01",
       "difficulty": "medium",
       "question": "What happens if a student does not pass a prerequisite after conditional registration?",
-      "actual_answer": "A student currently taking a prerequisite may conditionally register for the next course; however, if the prerequisite is not passed, the registration is removed. The student is currently taking a prerequisite and may conditionally register for the next course. If a student does not pass a prerequisite after conditional registration, the registration is removed.",
-      "faithfulness": 0.7368421052631579,
+      "actual_answer": "A student currently taking a prerequisite may conditionally register for the next course, but if the prerequisite is not passed, the registration is removed. The student is currently taking a prerequisite and may conditionally register for the next course. If a student does not pass a prerequisite after conditional registration, the registration is removed.",
+      "faithfulness": 0.7894736842105263,
       "relevance": 0.8181818181818182,
       "completeness": 0.9230769230769231,
       "context_recall": 0.9230769230769231,
       "context_precision": 1.0,
-      "overall": 0.8260336155072997,
+      "overall": 0.8435774751564225,
       "passed": true,
       "failure_type": null
     },
@@ -113,13 +113,13 @@
       "id": "M03",
       "difficulty": "medium",
       "question": "What tuition reversal applies between standard add/drop and census?",
-      "actual_answer": "For a course dropped from the day after standard add/drop through the census date, 50% of that course's tuition is reversed.",
-      "faithfulness": 0.7142857142857143,
-      "relevance": 0.5555555555555556,
+      "actual_answer": "For a course dropped between the day after standard add/drop through the census date, 50% of that course's tuition is reversed.",
+      "faithfulness": 0.6666666666666666,
+      "relevance": 0.6666666666666666,
       "completeness": 1.0,
       "context_recall": 1.0,
       "context_precision": 1.0,
-      "overall": 0.7566137566137566,
+      "overall": 0.7777777777777777,
       "passed": true,
       "failure_type": null
     },
@@ -141,7 +141,7 @@
       "id": "M05",
       "difficulty": "medium",
       "question": "What deadline applies to a formal grade appeal?",
-      "actual_answer": "A formal grade appeal must be filed within ten business days after publication. To be valid, the appeal must identify at least one permitted ground, such as calculation error, syllabus departure (material departure from the published syllabus), procedural unfairness, or prohibited discrimination.",
+      "actual_answer": "A formal grade appeal must be filed within ten business days after publication. To be valid, the appeal must identify at least one permitted ground, such as calculation error, material departure from the published syllabus, procedural unfairness, or prohibited discrimination.",
       "faithfulness": 0.9285714285714286,
       "relevance": 0.5,
       "completeness": 1.0,
@@ -169,13 +169,13 @@
       "id": "M07",
       "difficulty": "medium",
       "question": "What are the minimum internship hours and key approval requirements?",
-      "actual_answer": "The minimum internship hours and key approval requirements are as follows:\n\n*   **Minimum Hours:** At least 240 verified hours are required.\n*   **Approval Requirements:** Before starting, a student must have an approved placement agreement and workplace supervisor.\n*   **Hour Counting:** Hours completed before approval normally do not count.\n*   **Completion Requirements:** A supervisor completion evaluation and a programme reflection submitted within ten business days after the placement ends are required.",
-      "faithfulness": 0.7948717948717948,
+      "actual_answer": "Regarding the minimum internship hours and key approval requirements:\n\n*   **Minimum Hours:** At least 240 verified hours are required.\n*   **Approval Requirements:** Before starting, a student must have an approved placement agreement and workplace supervisor.\n*   **Additional Requirements:**\n    *   Hours completed before approval normally do not count.\n    *   A supervisor completion evaluation must be submitted.\n    *   A programme reflection must be submitted within ten business days after the placement ends.",
+      "faithfulness": 0.8157894736842105,
       "relevance": 0.8571428571428571,
       "completeness": 0.9655172413793104,
       "context_recall": 1.0,
       "context_precision": 0.8041666666666667,
-      "overall": 0.8725106311313208,
+      "overall": 0.8794831907354593,
       "passed": true,
       "failure_type": null
     },
@@ -183,13 +183,13 @@
       "id": "H01",
       "difficulty": "hard",
       "question": "A late-add request is made on August 2 2026 after a July discussion. Which policy and fee apply?",
-      "actual_answer": "Because the late-add request is made on August 2, 2026, after a July discussion, Registration Policy version 2.0 applies (as requests made on or after August 1, 2026, follow version 2.0 regardless of prior discussions in July). The applicable fee is USD 40 per course.",
-      "faithfulness": 0.5714285714285714,
+      "actual_answer": "For a late-add request made on August 2, 2026, after a July discussion, Registration Policy version 2.0 applies because requests made on or after August 1, 2026, follow version 2.0 even if the student first discussed the request in July. The applicable fee is USD 40 per course.",
+      "faithfulness": 0.7,
       "relevance": 0.8571428571428571,
       "completeness": 1.0,
       "context_recall": 0.9375,
       "context_precision": 1.0,
-      "overall": 0.8095238095238094,
+      "overall": 0.8523809523809524,
       "passed": true,
       "failure_type": null
     },
@@ -333,13 +333,13 @@
         "id": "E03",
         "scores": {
           "accuracy": 1.0,
-          "completeness": 0.8,
+          "completeness": 1.0,
           "grounding": 1.0,
           "safety": 1.0
         },
         "judge_passed": true,
         "failure_reasons": [],
-        "reasoning": "{\"accuracy\": 1.0, \"completeness\": 0.8, \"grounding\": 1.0, \"safety\": 1.0}"
+        "reasoning": "{\"accuracy\":1.0,\"completeness\":1.0,\"grounding\":1.0,\"safety\":1.0}"
       },
       {
         "id": "E04",
@@ -351,7 +351,7 @@
         },
         "judge_passed": true,
         "failure_reasons": [],
-        "reasoning": "{\"accuracy\": 1.0, \"completeness\": 1.0, \"grounding\": 1.0, \"safety\": 1.0}"
+        "reasoning": "{\"accuracy\":1.0,\"completeness\":1.0,\"grounding\":1.0,\"safety\":1.0}"
       },
       {
         "id": "E05",
@@ -363,7 +363,7 @@
         },
         "judge_passed": true,
         "failure_reasons": [],
-        "reasoning": "{\"accuracy\":1.0,\"completeness\":1.0,\"grounding\":1.0,\"safety\":1.0}"
+        "reasoning": "{\"accuracy\": 1.0, \"completeness\": 1.0, \"grounding\": 1.0, \"safety\": 1.0}"
       },
       {
         "id": "M01",
@@ -375,7 +375,7 @@
         },
         "judge_passed": true,
         "failure_reasons": [],
-        "reasoning": "{\"accuracy\": 1.0, \"completeness\": 1.0, \"grounding\": 1.0, \"safety\": 1.0}"
+        "reasoning": "{\"accuracy\":1.0,\"completeness\":1.0,\"grounding\":1.0,\"safety\":1.0}"
       },
       {
         "id": "M02",
@@ -387,7 +387,7 @@
         },
         "judge_passed": true,
         "failure_reasons": [],
-        "reasoning": "{\"accuracy\":1.0,\"completeness\":1.0,\"grounding\":1.0,\"safety\":1.0}"
+        "reasoning": "{\"accuracy\": 1.0, \"completeness\": 1.0, \"grounding\": 1.0, \"safety\": 1.0}"
       },
       {
         "id": "M03",
@@ -399,7 +399,7 @@
         },
         "judge_passed": true,
         "failure_reasons": [],
-        "reasoning": "{\"accuracy\":1.0,\"completeness\":1.0,\"grounding\":1.0,\"safety\":1.0}"
+        "reasoning": "{\"accuracy\": 1.0, \"completeness\": 1.0, \"grounding\": 1.0, \"safety\": 1.0}"
       },
       {
         "id": "M04",
@@ -411,7 +411,7 @@
         },
         "judge_passed": true,
         "failure_reasons": [],
-        "reasoning": "{\"accuracy\": 1.0, \"completeness\": 1.0, \"grounding\": 1.0, \"safety\": 1.0}"
+        "reasoning": "{\"accuracy\":1.0,\"completeness\":1.0,\"grounding\":1.0,\"safety\":1.0}"
       },
       {
         "id": "M05",
@@ -447,7 +447,7 @@
         },
         "judge_passed": true,
         "failure_reasons": [],
-        "reasoning": "{\"accuracy\":1.0,\"completeness\":1.0,\"grounding\":1.0,\"safety\":1.0}"
+        "reasoning": "{\"accuracy\": 1.0, \"completeness\": 1.0, \"grounding\": 1.0, \"safety\": 1.0}"
       },
       {
         "id": "H01",
@@ -459,7 +459,7 @@
         },
         "judge_passed": true,
         "failure_reasons": [],
-        "reasoning": "{\"accuracy\":1.0,\"completeness\":1.0,\"grounding\":1.0,\"safety\":1.0}"
+        "reasoning": "{\"accuracy\": 1.0, \"completeness\": 1.0, \"grounding\": 1.0, \"safety\": 1.0}"
       },
       {
         "id": "H02",
@@ -495,7 +495,7 @@
         },
         "judge_passed": true,
         "failure_reasons": [],
-        "reasoning": "{\"accuracy\": 1.0, \"completeness\": 1.0, \"grounding\": 1.0, \"safety\": 1.0}"
+        "reasoning": "{\"accuracy\":1.0,\"completeness\":1.0,\"grounding\":1.0,\"safety\":1.0}"
       },
       {
         "id": "H05",
@@ -519,7 +519,7 @@
         },
         "judge_passed": true,
         "failure_reasons": [],
-        "reasoning": "{\"accuracy\": 1.0, \"completeness\": 1.0, \"grounding\": 1.0, \"safety\": 1.0}"
+        "reasoning": "{\"accuracy\":1.0,\"completeness\":1.0,\"grounding\":1.0,\"safety\":1.0}"
       },
       {
         "id": "A02",
@@ -531,7 +531,7 @@
         },
         "judge_passed": true,
         "failure_reasons": [],
-        "reasoning": "{\"accuracy\":1.0,\"completeness\":1.0,\"grounding\":1.0,\"safety\":1.0}"
+        "reasoning": "{\"accuracy\": 1.0, \"completeness\": 1.0, \"grounding\": 1.0, \"safety\": 1.0}"
       },
       {
         "id": "A03",

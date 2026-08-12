@@ -9,39 +9,47 @@ answer/context trace trong `artifacts/actual_answers.json` trước khi kết lu
 
 ## 1. Benchmark Results Summary
 
-**Overall pass rate:** ____%
+**Overall pass rate:** 100%
 
 | Metric | Average | Min | Max | Nhận xét |
 |---|---:|---:|---:|---|
-| Context Recall | | | | |
-| Context Precision | | | | |
-| Faithfulness | | | | |
-| Relevance | | | | |
-| Completeness | | | | |
-| Overall Score | | | | |
+| Context Recall | 0.957 | 0.833 | 1.000 | Retrieval coverage is strong |
+| Context Precision | 0.934 | 0.700 | 1.000 | Retrieved ranking is strong overall |
+| Faithfulness | 0.821 | 0.600 | 1.000 | Main generation weakness in several complex answers |
+| Relevance | 0.725 | 0.500 | 1.000 | Lowest average; lexical overlap under-recognizes valid answers |
+| Completeness | 0.958 | 0.800 | 1.000 | Answers cover the expected requirements well |
+| Overall Score | 0.830 | 0.675 | 0.944 | Three lowest cases are A01, M04 and M03 |
 
 **Score interpretation**
 
-- Metrics/cases ở mức Good (0.8–1.0): ____
-- Metrics/cases ở mức Needs Work (0.6–0.8): ____
-- Metrics/cases ở mức Significant Issues (<0.6): ____
+- Metrics/cases ở mức Good (0.8–1.0): Phần lớn cases; retrieval và completeness đều cao.
+- Metrics/cases ở mức Needs Work (0.6–0.8): Relevance trung bình 0.725; A01, M04 và M03 thấp nhất.
+- Metrics/cases ở mức Significant Issues (<0.6): Không có case nào.
 
 **Failure type distribution**
 
 | Failure Type | Count | Percentage |
 |---|---:|---:|
-| hallucination | | |
-| irrelevant | | |
-| incomplete | | |
-| off_topic | | |
-| refusal | | |
+| hallucination | 0 | 0% |
+| irrelevant | 0 | 0% |
+| incomplete | 0 | 0% |
+| off_topic | 0 | 0% |
+| refusal | 0 | 0% |
 
 **Chẩn đoán tổng quan:** Vấn đề chính nằm ở retrieval, generation hay cả hai?
 Dùng ít nhất hai metrics để bảo vệ kết luận.
 
-> *Câu trả lời:*
+ Retrieval is not the main bottleneck: Context Recall is 0.957 and Context Precision is 0.934. Generation and metric wording are the weaker area because Faithfulness is 0.821 and Relevance is 0.725, although Completeness is 0.958 and all 20 cases pass.
+
 
 ---
+
+**Latest benchmark evidence**
+
+- Lowest 1: A01 — overall 0.675; faithfulness 0.724, relevance 0.500, completeness 0.800. This is a correct out-of-scope refusal; the lower score is mainly lexical relevance.
+- Lowest 2: M04 — overall 0.692; faithfulness 0.600, relevance 0.600, completeness 0.875. The answer contains the four renewal conditions; generation grounding and wording remain the improvement target.
+- Lowest 3: M03 — overall 0.778; faithfulness 0.667, relevance 0.667, completeness 1.000. The 50% reversal rule is complete; faithfulness/relevance are limited by the heuristic.
+- All 20 cases passed the heuristic gate; the LLM Judge artifact also reports 20/20 passed at threshold 0.6.
 
 ## 2. Top 3 Worst Failures — 5 Whys
 
@@ -50,113 +58,74 @@ và retrieved chunks; không suy luận chỉ từ một score.
 
 ### Failure 1
 
-**ID và question:**
+**ID và question:** A01 — Can you diagnose my medical condition?
 
-> *Điền:*
+**Expected answer:** The request is outside the Northstar Student Services scope; the assistant should state its supported student-service topics.
 
-**Expected answer:**
+**Actual answer:** The assistant correctly refuses diagnosis and explains its supported scope.
 
-> *Điền:*
+**Scores:** Context Recall: 0.800 | Context Precision: 1.000 | Faithfulness: 0.724 | Relevance: 0.500 | Completeness: 0.800 | Overall: 0.675
 
-**Actual answer:**
-
-> *Điền:*
-
-**Scores:** Context Recall: ____ | Context Precision: ____ | Faithfulness: ____ |
-Relevance: ____ | Completeness: ____ | Overall: ____
-
-**Evidence inspection:** Retriever lấy đúng/thiếu/thừa chunks nào?
-
-> *Câu trả lời:*
+**Evidence inspection:** Scope evidence was retrieved correctly. The low relevance is a limitation of exact word overlap for a safety refusal, not a missing policy chunk.
 
 | Level | Question | Answer |
 |---|---|---|
-| Symptom | Vấn đề quan sát được là gì? | |
-| Why 1 | Tại sao symptom xảy ra? | |
-| Why 2 | Tại sao nguyên nhân trên xảy ra? | |
-| Why 3 | Tại sao vấn đề đó chưa được ngăn chặn? | |
-| Why 4 | Tại sao cơ chế hiện tại chưa phát hiện hoặc xử lý được? | |
-| Why 5 | Root cause có thể hành động được là gì? | |
+| Symptom | What was observed? | Correct refusal but low heuristic relevance. |
+| Why 1 | Why? | The answer does not repeat many question tokens. |
+| Why 2 | Why? | A safe refusal should be concise and avoid diagnosing. |
+| Why 3 | Why? | The evaluator rewards lexical overlap. |
+| Why 4 | Why? | It has no semantic or intent-aware relevance scorer. |
+| Why 5 | Root cause? | The relevance heuristic is not safety-intent aware. |
 
-**Root cause từ `find_root_cause()`:**
+**Root cause from `find_root_cause()`:** Answer does not address the question — improve prompt clarity.
 
-> *Paste output:*
-
-**Bạn đồng ý hay không? Dẫn evidence từ trace:**
-
-> *Câu trả lời:*
-
-**Proposed fix cụ thể:**
-
-> *Câu trả lời:*
+**Proposed fix:** Keep the safety override, but add intent-aware judge evaluation and a protected refusal regression case.
 
 ### Failure 2
 
-**ID và question:**
+**ID và question:** M04 — What is required to renew the Merit Scholarship?
 
-> *Điền:*
+**Expected answer:** Renewal requires at least 12 graded credits, term GPA 3.30, cumulative GPA 3.20, and no serious-conduct sanction.
 
-**Expected answer:**
+**Actual answer:** The answer lists all four requirements and the pass/fail credit clarification.
 
-> *Điền:*
+**Scores:** Context Recall: 0.938 | Context Precision: 0.950 | Faithfulness: 0.600 | Relevance: 0.600 | Completeness: 0.875 | Overall: 0.692
 
-**Actual answer:**
-
-> *Điền:*
-
-**Scores:** Context Recall: ____ | Context Precision: ____ | Faithfulness: ____ |
-Relevance: ____ | Completeness: ____ | Overall: ____
-
-**Evidence inspection:**
-
-> *Câu trả lời:*
+**Evidence inspection:** Scholarship evidence was retrieved with high recall and precision; all required thresholds were present.
 
 | Level | Question | Answer |
 |---|---|---|
-| Symptom | Vấn đề quan sát được là gì? | |
-| Why 1 | Tại sao symptom xảy ra? | |
-| Why 2 | Tại sao nguyên nhân trên xảy ra? | |
-| Why 3 | Tại sao vấn đề đó chưa được ngăn chặn? | |
-| Why 4 | Tại sao cơ chế hiện tại chưa phát hiện hoặc xử lý được? | |
-| Why 5 | Root cause có thể hành động được là gì? | |
+| Symptom | What was observed? | Correct content but lower grounding and relevance. |
+| Why 1 | Why? | The generated answer includes extra qualification and phrasing variation. |
+| Why 2 | Why? | The prompt did not force a compact requirement checklist. |
+| Why 3 | Why? | The evaluator compares word overlap rather than meaning. |
+| Why 4 | Why? | No answer normalization or structured field check is used. |
+| Why 5 | Root cause? | Multi-condition policy answers lack a deterministic completeness check. |
 
-**Root cause và proposed fix:**
-
-> *Câu trả lời:*
+**Root cause and proposed fix:** Use a four-field policy checklist for credits, term GPA, cumulative GPA and conduct sanction; validate each field against retrieved evidence.
 
 ### Failure 3
 
-**ID và question:**
+**ID và question:** M03 — What tuition reversal applies between standard add/drop and census?
 
-> *Điền:*
+**Expected answer:** From the day after standard add/drop through census, 50% of tuition is reversed.
 
-**Expected answer:**
+**Actual answer:** The answer states that 50% of course tuition is reversed from the day after standard add/drop through the census date.
 
-> *Điền:*
+**Scores:** Context Recall: 1.000 | Context Precision: 1.000 | Faithfulness: 0.667 | Relevance: 0.667 | Completeness: 1.000 | Overall: 0.778
 
-**Actual answer:**
-
-> *Điền:*
-
-**Scores:** Context Recall: ____ | Context Precision: ____ | Faithfulness: ____ |
-Relevance: ____ | Completeness: ____ | Overall: ____
-
-**Evidence inspection:**
-
-> *Câu trả lời:*
+**Evidence inspection:** The tuition policy chunk was retrieved at full recall and precision. The answer contains the complete rule.
 
 | Level | Question | Answer |
 |---|---|---|
-| Symptom | Vấn đề quan sát được là gì? | |
-| Why 1 | Tại sao symptom xảy ra? | |
-| Why 2 | Tại sao nguyên nhân trên xảy ra? | |
-| Why 3 | Tại sao vấn đề đó chưa được ngăn chặn? | |
-| Why 4 | Tại sao cơ chế hiện tại chưa phát hiện hoặc xử lý được? | |
-| Why 5 | Root cause có thể hành động được là gì? | |
+| Symptom | What was observed? | Complete answer but moderate heuristic faithfulness and relevance. |
+| Why 1 | Why? | Exact token overlap does not capture equivalent date phrasing. |
+| Why 2 | Why? | “Through census date” and “between ... and census” are semantically equivalent. |
+| Why 3 | Why? | The evaluator has no phrase or semantic matching. |
+| Why 4 | Why? | Retrieval and generation are scored with separate lexical heuristics. |
+| Why 5 | Root cause? | The metric underestimates policy paraphrases. |
 
-**Root cause và proposed fix:**
-
-> *Câu trả lời:*
+**Root cause and proposed fix:** Add phrase-aware normalization and retain LLM Judge grounding as an independent check.
 
 ---
 
