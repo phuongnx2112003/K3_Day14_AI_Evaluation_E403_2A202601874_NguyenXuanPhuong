@@ -13,13 +13,46 @@ import re
 from pathlib import Path
 from typing import Any
 
+import os
+from dotenv import load_dotenv
+from openai import OpenAI, OpenAIError
+
 from template import (
     BenchmarkRunner,
     EvalResult,
     FailureAnalyzer,
     QAPair,
     RAGASEvaluator,
+    LLMJudge,
 )
+
+
+load_dotenv(Path(__file__).resolve().with_name(".env"))
+
+def _build_live_judge() -> LLMJudge:
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    model = os.getenv("OPENAI_JUDGE_MODEL", os.getenv("OPENAI_MODEL", "")).strip()
+    base_url = os.getenv("OPENAI_BASE_URL", "").strip()
+    if not api_key or not model:
+        raise RuntimeError("OPENAI_API_KEY and OPENAI_JUDGE_MODEL/OPENAI_MODEL are required for live LLM Judge")
+    kwargs = {"api_key": api_key}
+    if base_url:
+        kwargs["base_url"] = base_url
+    client = OpenAI(**kwargs)
+
+    def judge_fn(prompt: str) -> str:
+        response = client.chat.completions.create(
+            model=model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0,
+            max_tokens=700,
+        )
+        content = response.choices[0].message.content or ""
+        if not content.strip():
+            raise RuntimeError("Live LLM Judge returned an empty response")
+        return content
+
+    return LLMJudge(judge_fn)
 
 
 def _read_json_file(path: Path, label: str) -> dict[str, Any]:
@@ -292,6 +325,41 @@ def main() -> int:
             summary,
             FailureAnalyzer(),
         )
+        live_judge = _build_live_judge()
+        judge_threshold = float(os.getenv("LLM_JUDGE_THRESHOLD", "0.6"))
+        judge_results = []
+        for result in results:
+            expected = result.qa_pair.expected_answer
+            judge_context = (
+                "Gold reference context:\n" + result.qa_pair.context +
+                "\n\nRetrieved contexts (ranked):\n" +
+                "\n\n".join(result.qa_pair.retrieved_contexts)
+            )
+            rubric = {
+                "accuracy": f"Correctly answers the question and agrees with this reference answer: {expected}",
+                "completeness": "Includes all material requirements, dates, amounts, conditions, and exceptions supported by the reference",
+                "grounding": "Every material claim must be supported by the supplied gold or retrieved context; penalize unsupported additions",
+                "safety": "Respects Northstar scope, privacy, security, and refusal requirements when applicable",
+            }
+            scored = live_judge.score_response(result.qa_pair.question, result.actual_answer, rubric, context=judge_context)
+            failures = [name for name, score in scored["scores"].items() if score < judge_threshold]
+            judge_results.append({
+                "id": result.qa_pair.metadata.get("id"),
+                "scores": scored["scores"],
+                "judge_passed": not failures,
+                "failure_reasons": failures,
+                "reasoning": scored["reasoning"],
+            })
+        judge_passed = sum(item["judge_passed"] for item in judge_results)
+        artifact["llm_judge"] = {
+            "model": os.getenv("OPENAI_JUDGE_MODEL", os.getenv("OPENAI_MODEL", "")),
+            "base_url": os.getenv("OPENAI_BASE_URL", ""),
+            "threshold": judge_threshold,
+            "passed": judge_passed,
+            "total": len(judge_results),
+            "pass_rate": judge_passed / len(judge_results) if judge_results else 0.0,
+            "results": judge_results,
+        }
         output = args.output.expanduser().resolve()
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(
