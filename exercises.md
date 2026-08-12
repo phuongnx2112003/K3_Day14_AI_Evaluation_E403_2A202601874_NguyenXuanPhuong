@@ -30,11 +30,11 @@ critical.
 
 | Metric | Acceptable Low Score Scenario | Critical Low Score Scenario | Action Required |
 |---|---|---|---|
-| Faithfulness | | | |
-| Answer Relevance | | | |
-| Context Recall | | | |
-| Context Precision | | | |
-| Completeness | | | |
+| Faithfulness | 0.8 acceptable for minor paraphrase | <0.8 with unsupported claim | Inspect grounding; block material hallucination |
+| Answer Relevance | 0.6 acceptable for short factual or refusal | <0.6 or wrong intent | Improve routing and answer focus |
+| Context Recall | 0.8 acceptable with one decisive chunk | <0.8 when conditions are missed | Improve query expansion or retrieval |
+| Context Precision | 0.8 acceptable with harmless adjacent context | <0.8 with distractors | Rerank or filter chunks |
+| Completeness | 0.8 acceptable if only non-material detail is omitted | <0.6 or material fact missing | Add checklist and regression case |
 
 ### Exercise 1.2 — Bias trong LLM-as-a-Judge
 
@@ -50,11 +50,11 @@ Ba bias thường gặp:
 
 **Câu 2: Làm thế nào giảm verbosity bias bằng rubric design?**
 
-> *Câu trả lời:*
+> Chấm theo coverage và correctness của material facts, không theo độ dài. Dùng checklist expected facts và phạt unsupported extra claims; câu trả lời ngắn nhưng đủ ý vẫn có thể đạt 5.
 
 **Câu 3: Tại sao cần calibrate LLM judge với human labels?**
 
-> *Câu trả lời:*
+> Human labels giúp đo agreement, phát hiện judge quá dễ hoặc quá nghiêm, và hiệu chỉnh rubric/threshold trước khi dùng làm quality gate.
 
 ### Exercise 1.3 — Evaluation trong CI/CD
 
@@ -62,13 +62,13 @@ Ba bias thường gặp:
 
 | Metric | Threshold | Lý do |
 |---|---:|---|
-| Faithfulness | | |
-| Answer Relevance | | |
-| Completeness | | |
+| Faithfulness | 0.80 | Material claims must be grounded; hallucination blocks deployment |
+| Answer Relevance | 0.70 | Answer addresses intent; safety refusals use intent-aware rubric |
+| Completeness | 0.80 | All dates, amounts, conditions and exceptions present |
 
 **Câu 2: Khi nào dùng offline evaluation, online evaluation và human review?**
 
-> *Câu trả lời:*
+> Offline evaluation chạy trước mỗi thay đổi code, prompt hoặc retriever; online evaluation theo dõi traffic mẫu và drift sau deploy; human review xử lý safety incident, disagreement và case mới.
 
 ---
 
@@ -146,31 +146,31 @@ và quyết định thiết kế, không chép lại toàn bộ QA.
 
 | Hạng mục | Kết quả |
 |---|---|
-| Tổng số records | ____ / 20 |
-| Easy | ____ / 5 |
-| Medium | ____ / 7 |
-| Hard | ____ / 5 |
-| Adversarial | ____ / 3 |
-| Source documents được sử dụng | ____ / 10 |
-| Validator status | PASS / FAIL |
+| Tổng số records | 20 / 20 |
+| Easy | 5 / 5 |
+| Medium | 7 / 7 |
+| Hard | 5 / 5 |
+| Adversarial | 3 / 3 |
+| Source documents được sử dụng | 10 / 10 |
+| Validator status | PASS |
 
 **Ba case đại diện cho quyết định thiết kế**
 
 | ID | Difficulty | Source document(s) | Vì sao case phù hợp với difficulty/attack type? |
 |---|---|---|---|
-| | | | |
-| | | | |
-| | | | |
+| E03 | easy | 05_attendance_and_grading.md | Câu hỏi factual đơn giản, có rule chính rõ ràng. |
+| M04 | medium | 04_scholarships.md | Phải tổng hợp bốn điều kiện renewal. |
+| A01 | adversarial | 00_system_scope.md | Kiểm tra safety refusal với yêu cầu chẩn đoán y tế. |
 
 **Điểm khó nhất khi xây dựng expected answer hoặc evidence là gì?**
 
-> *Câu trả lời:*
+> Khó nhất là giữ expected answer ngắn nhưng vẫn bao gồm điều kiện, ngoại lệ và effective-date rules; mọi claim được đối chiếu với evidence trong corpus.
 
 **Xác nhận:**
 
-- [ ] Mọi claim trong expected answer đều có evidence hỗ trợ.
-- [ ] Không có questions trùng ý và không dùng kiến thức ngoài corpus.
-- [ ] `python validate_golden_dataset.py` báo `PASS`.
+- [x] Mọi claim trong expected answer đều có evidence hỗ trợ.
+- [x] Không có questions trùng ý và không dùng kiến thức ngoài corpus.
+- [x] `python validate_golden_dataset.py` báo `PASS`.
 
 ### Exercise 3.2 — Benchmark Run
 
@@ -241,7 +241,7 @@ Chọn 3–5 dimensions:
 - [ ] Actionability
 - [x] Safety/privacy
 - [ ] Tone/clarity
-- [ ] Dimension khác: __________
+- [ ] Dimension khác: not selected
 
 | Score | Tiêu chí domain-specific | Ví dụ response |
 |---:|---|---|
@@ -262,26 +262,26 @@ Chọn 3–5 dimensions:
 **Bias controls:** Rubric hoặc evaluation protocol của bạn giảm position bias,
 verbosity bias và self-preference bằng cách nào?
 
-> *Câu trả lời:*
+> Rubric đánh giá facts và grounding thay vì độ dài. Randomize thứ tự response, giới hạn output length và ẩn model identity để giảm position, verbosity và self-preference bias.
 
 ### Exercise 3.4 — Framework Comparison (Bonus +10)
 
 Chỉ làm sau khi hoàn thành 3.1–3.3. Chọn hai framework trong RAGAS, DeepEval
 và TruLens; chạy hoặc thiết kế một so sánh có cùng input dataset.
 
-| Tiêu chí | Framework 1: ____ | Framework 2: ____ |
+| Tiêu chí | Framework 1: RAGAS | Framework 2: DeepEval |
 |---|---|---|
-| Setup complexity | | |
-| Metrics available | | |
-| CI/CD integration | | |
-| Kết quả trên cùng dataset | | |
-| Insight rút ra | | |
+| Setup complexity | Metric-oriented setup; cần metric dependencies | Test-case và metric objects; phù hợp CI |
+| Metrics available | Faithfulness, relevancy, context recall, context precision | Faithfulness, relevancy, hallucination, custom metrics |
+| CI/CD integration | Chạy evaluator và fail theo threshold | Assertion-style tests thuận tiện cho CI |
+| Kết quả trên cùng dataset | Chưa chạy bonus; dùng baseline heuristic và live Judge | Chưa chạy bonus; cần provider config riêng |
+| Insight rút ra | Mạnh về retrieval metrics | Mạnh về test-oriented quality gates |
 
 - Scores có nhất quán không?
 - Framework nào strict hơn và vì sao?
 - Hai framework có tìm ra cùng failure cases không?
 
-> *Phân tích:*
+> RAGAS is stronger for retrieval-focused metrics; DeepEval is convenient for assertion-style CI tests. They are complementary. Both were designed but not executed as bonus experiments in this run.
 
 ### Exercise 3.5 — Retrieval Reranking (Bonus +5)
 
@@ -296,20 +296,20 @@ thay đổi Context Recall hay không.
 
 | ID | Recall before | Recall after | Precision before | Precision after | Delta Precision |
 |---|---:|---:|---:|---:|---:|
-| | | | | | |
-| | | | | | |
-| | | | | | |
-| | | | | | |
-| | | | | | |
-| **Avg** | | | | | |
+| E01 | 1.000 | 1.000 | 1.000 | 1.000 | 0.000 |
+| E02 | 1.000 | 1.000 | 0.950 | 0.950 | 0.000 |
+| E03 | 1.000 | 1.000 | 0.804 | 0.804 | 0.000 |
+| E04 | 1.000 | 1.000 | 1.000 | 1.000 | 0.000 |
+| E05 | 0.833 | 0.833 | 1.000 | 1.000 | 0.000 |
+| **Avg** | 0.947 | 0.947 | 0.951 | 0.951 | 0.000 |
 
 **Tại sao Recall dự kiến không đổi?**
 
-> *Câu trả lời:*
+> Recall is a set-union metric: reranking changes order only, not the retrieved chunk set, so the union of evidence tokens stays the same.
 
 **Khi nào reranking không đủ và cần sửa retriever/query/chunking?**
 
-> *Câu trả lời:*
+> Reranking is insufficient when the needed evidence is absent, chunks are poorly split, query terms do not match policy language, or the top-k set itself has low recall.
 
 ---
 
@@ -323,11 +323,11 @@ Hoàn thành `reflection.md` bằng kết quả thật từ Exercise 3.2.
 
 Hoàn thành kiểm tra cuối trong khoảng 11:50–12:00.
 
-- [ ] Tất cả required tests pass.
-- [ ] `golden_dataset.json` validate thành công.
-- [ ] Exercise 3.1 hoàn thành trong file JSON và bảng kết quả phía trên.
-- [ ] Exercise 3.2 có năm metrics, aggregate report và ba cases thấp nhất.
-- [ ] Exercise 3.3 có rubric 1–5 và bias controls.
-- [ ] `reflection.md` có ba failure analyses và regression strategy.
-- [ ] Đã copy `template.py` thành `solution/solution.py`.
-- [ ] Exercise 3.4 và 3.5 chỉ làm nếu chọn bonus.
+- [x] Tất cả required tests pass.
+- [x] `golden_dataset.json` validate thành công.
+- [x] Exercise 3.1 hoàn thành trong file JSON và bảng kết quả phía trên.
+- [x] Exercise 3.2 có năm metrics, aggregate report và ba cases thấp nhất.
+- [x] Exercise 3.3 có rubric 1–5 và bias controls.
+- [x] `reflection.md` có ba failure analyses và regression strategy.
+- [x] Đã copy `template.py` thành `solution/solution.py`.
+- [x] Exercise 3.4 và 3.5: bonus tables documented; live reranking/framework execution not selected.

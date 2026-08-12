@@ -136,13 +136,13 @@ không chỉ nhóm theo tên metric.
 
 | Cluster | Root Cause | Failure IDs | Priority |
 |---|---|---|---|
-| 1 | | | High/Medium/Low |
-| 2 | | | |
-| 3 | | | |
+| 1 | Lexical or semantic mismatch in answer scoring | A01, M03 | Medium |
+| 2 | Multi-condition policy answers need structured checklist | M04 | High |
+| 3 | Safety and privacy refusal needs intent-aware evaluation | A01, A02, A03 | High |
 
 **Nếu chỉ được sửa một cluster, bạn chọn cluster nào và vì sao?**
 
-> *Câu trả lời:*
+> Prioritize cluster 2 because M04 exposes a repeatable generation pattern: all material conditions should be checked before returning the answer. Safety cluster 3 is also a deployment blocker, but the current overrides already protect it.
 
 ---
 
@@ -151,74 +151,50 @@ không chỉ nhóm theo tên metric.
 Paste output của `generate_improvement_log()`:
 
 ```text
-[paste Markdown table here]
+| Failure ID | Type | Root Cause | Suggested Fix | Status |
+|---|---|---|---|---|
+| A01 | lexical relevance | Relevance heuristic is not intent-aware | Add semantic or intent-aware judge check | Done for safety; monitor |
+| M04 | incomplete structured checking | Multi-condition answer has no field checklist | Add policy-field validation | Done in prompt/augmentation |
+| M03 | lexical paraphrase | Exact overlap misses equivalent policy wording | Add phrase-aware normalization | Planned |
 ```
 
-**Ba improvement suggestions ưu tiên**
-
-1. ____
-2. ____
-3. ____
-
-Với mỗi suggestion, nêu metric dự kiến thay đổi và cách đo lại.
+1. Add intent-aware semantic evaluation for refusals and paraphrases.
+2. Add structured policy checklists for dates, amounts, conditions and exceptions.
+3. Keep the live LLM Judge as an independent grounding and safety gate.
 
 | Suggestion | Target metric | Verification method |
 |---|---|---|
-| | | |
-| | | |
-| | | |
+| Intent-aware relevance scoring | Relevance | Re-run A01, A02, M03 against heuristic baseline |
+| Structured policy checklist | Faithfulness, Completeness | Re-run M04, M05 and M07; require all material fields |
+| Retrieval regression set | Context Recall, Context Precision | Run all 20 cases and block drops over 0.05 |
+```
 
 ---
+
+
 
 ## 5. Regression Testing Strategy
 
-**Câu 1: Khi nào chạy `run_regression()` trong production workflow?**
+Cau 1: Run run_regression after every code, prompt, generator, retriever, chunking or dataset change and before deployment.
 
-> *Câu trả lời:*
+Cau 2: A 0.05 drop is a useful lab baseline; production also needs per-case gates for safety, hallucination and deadlines.
 
-**Câu 2: Threshold drop 0.05 có phù hợp Student Services không? Vì sao?**
+Cau 3: Block material hallucination, unsafe privacy behavior, failed safety refusal and answer metrics below threshold; alert on moderate relevance or precision drops without material errors.
 
-> *Câu trả lời:*
-
-**Câu 3: Metric/failure nào phải block deployment, metric nào chỉ alert?**
-
-> *Câu trả lời:*
-
-**Câu 4: Điền evaluation stages vào flow.**
-
-```text
-Code/prompt/retrieval change → [________] → [________] → [________] → Deploy
-```
-
-> *Giải thích:*
-
----
+Cau 4 flow: Code change -> pytest and dataset validation -> RAG benchmark -> LLM Judge and regression gate -> Deploy.
 
 ## 6. Continuous Improvement Loop
 
-```text
-Evaluate → Analyze → Improve → Augment benchmark → Repeat
-```
-
-| Priority | Action | Metric dự kiến cải thiện | Expected impact |
+| Priority | Action | Target metric | Expected impact |
 |---:|---|---|---|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
+| 1 | Add A01/A02 refusal and A03 authorization variants | Safety, Relevance | Better adversarial coverage |
+| 2 | Add date-version and multi-condition policy variants | Faithfulness, Completeness | Detect policy and condition errors |
+| 3 | Add M03/M04 paraphrase pairs | Relevance | Measure semantic quality beyond overlap |
 
-**Hai hoặc ba failure cases nào cần thêm vào benchmark ở vòng tiếp theo?**
-
-> *Câu trả lời:*
-
----
+Next benchmark additions: A01/A02 safety variants, A03 authorization variants and M03/M04 paraphrase variants.
 
 ## 7. Final Reflection
 
-**Điều gì trong kết quả benchmark trái với dự đoán ban đầu của bạn?**
+The surprising result was a 100% pass rate despite Relevance averaging only 0.725. This shows that a permissive per-metric gate can hide moderate quality differences.
 
-> *Câu trả lời:*
-
-**Word-overlap heuristics trong lab có giới hạn gì? Nếu đưa hệ thống vào
-production, bạn sẽ thay hoặc bổ sung metric nào?**
-
-> *Câu trả lời:*
+Word overlap penalizes valid paraphrases and safety refusals and cannot reliably judge entailment. Production should combine semantic relevance, citation or entailment checks, retrieval metrics, safety policies, latency monitoring and human review.
